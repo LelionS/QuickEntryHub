@@ -21,14 +21,14 @@ urlpatterns = [
     path('', include('home.urls')),
     path("admin/", admin.site.urls),
     path("", include('admin_datta.urls')),
-    path("", include("dyn_dt.urls")),
-    path("", include("dyn_api.urls")), 
+    # path("", include("dyn_dt.urls")),
+    # path("", include("dyn_api.urls")), 
 ]
 
 # Lazy-load on routing is needed
 # During the first build, API is not yet generated
-try:
-    urlpatterns.append( path("api/"      , include("api.urls"))    )
-    urlpatterns.append( path("login/jwt/", view=obtain_auth_token) )
-except:
-    pass
+# try:
+#     urlpatterns.append( path("api/"      , include("api.urls"))    )
+#     urlpatterns.append( path("login/jwt/", view=obtain_auth_token) )
+# except:
+#     pass
