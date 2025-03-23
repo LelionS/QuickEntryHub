@@ -64,23 +64,36 @@
         <!--        -->
         
         <li class="pc-item">
-          <a href="{% url "color" %}" class="pc-link">
-            <span class="pc-micon"><i data-feather="droplet"></i></span>
-            <span class="pc-mtext">Color</span>
-          </a>
+          <a href="{% url 'week_entries' %}" class="pc-link">
+            <span class="pc-micon"><i data-feather="file-text"></i></span>
+            <span class="pc-mtext">Records</span>
+        </a>        
         </li>
-        <li class="pc-item">
-          <a href="{% url "typography" %}" class="pc-link">
-            <span class="pc-micon"><i data-feather="type"></i></span>
-            <span class="pc-mtext">Typography</span>
-          </a>
-        </li>
-        <li class="pc-item">
-          <a href="{% url "icon_feather" %}" class="pc-link">
-            <span class="pc-micon"><i data-feather="feather"></i></span>
-            <span class="pc-mtext">Icons</span>
-          </a>
-        </li>
+        <li class="pc-item pc-hasmenu">
+          <a href="#" class="pc-link">
+            <span class="pc-micon"><i class="fas fa-cogs"></i></span>
+            <span class="pc-mtext">Manage</span>
+        </a>
+          <ul class="pc-submenu">
+              {% if user.is_staff %}
+              <li class="pc-item">
+                  <a href="http://127.0.0.1:8000/admin/home/bay/" class="pc-link">Bay</a>
+              </li>
+              <li class="pc-item">
+                  <a href=" http://127.0.0.1:8000/admin/home/bed/" class="pc-link">Bed</a>
+              </li>
+              <li class="pc-item">
+                <a href="http://127.0.0.1:8000/admin/home/variety/" class="pc-link">Variety</a>
+               </li>
+              <li class="pc-item">
+                <a href="http://127.0.0.1:8000/admin/home/weekentry/" class="pc-link">Edit Week Entries</a>
+              </li>
+      
+              {% endif %}
+          </ul>
+      </li>
+      
+        
         <li class="pc-item pc-caption">
           <label>Authentication</label>
           <i data-feather="monitor"></i>
@@ -91,12 +104,6 @@
           <a href="{% url "login" %}" class="pc-link">
             <span class="pc-micon"><i data-feather="lock"></i></span>
             <span class="pc-mtext">Login</span>
-          </a>
-        </li>
-        <li class="pc-item">
-          <a href="{% url "register" %}" class="pc-link">
-            <span class="pc-micon"><i data-feather="user-plus"></i></span>
-            <span class="pc-mtext">Register</span>
           </a>
         </li>
         {% else %}
@@ -111,17 +118,7 @@
           </a>
         </li>
         {% endif %}
-        <li class="pc-item pc-caption">
-          <label>Other</label>
-          <i data-feather="sidebar"></i>
-        </li>
-        
-        <li class="pc-item">
-          <a href="{% url "sample_page" %}" class="pc-link">
-            <span class="pc-micon"><i data-feather="sidebar"></i></span>
-            <span class="pc-mtext">Sample page</span>
-          </a>
-        </li>
+      
       
       {% endif %}  
       </ul>

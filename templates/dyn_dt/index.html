@@ -1,64 +1,146 @@
 {% extends "layouts/base.html" %}
 {% load static %}
 
-{% block title %} {% if page_title %} page_title {% else %} Dynamic DataTables {% endif %} {% endblock title %} 
+{% block title %} Advanced Dashboard {% endblock title %}
 
 {% block content %}
-<!-- [ Main Content ] start -->
 <div class="pc-container">
     <div class="pc-content">
-        <!-- [ breadcrumb ] start -->
         <div class="page-header">
-            <div class="page-block">
-                <div class="row align-items-center">
-                    <div class="col-md-12">
-                        <div class="page-header-title">
-                            <h5 class="m-b-10">
-                                <a href="/">Home</a>
-                            </h5>
-                        </div>
-                        <ul class="breadcrumb">
-                            <li class="breadcrumb-item">
-                                <a href="{% url 'dynamic_dt' %}">Dynamic DT</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            <h5 class="m-b-10"><a href="/">Home</a></h5>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dynamic_dt' %}">Dashboard</a></li>
+            </ul>
         </div>
-        <!-- [ breadcrumb ] end -->
 
-
-        <!-- [ Main Content ] start -->
+        <!-- [ Graphs Section ] -->
         <div class="row">
-            <!-- [ Typography ] start -->
-            <div class="col-sm-12">
+            <div class="col-md-6">
                 <div class="card">
-                    <div class="card-header">
-                        <h5>
-                            Available Routes - defined in <strong>settings.DYNAMIC_DATATB</strong>
-                        </h5>
-                    </div>
+                    <div class="card-header"><h5>Bay Analysis</h5></div>
                     <div class="card-body">
-                        <ul>
-                            {% for link in routes %}
-                                <li>
-                                    <a href="{% url "model_dt" link %}">{{ link }}</a>
-                                </li>    
-                            {% endfor %}
-                        </ul>
+                        <div id="bay_chart" class="chart-clickable"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header"><h5>Variety Distribution</h5></div>
+                    <div class="card-body">
+                        <div id="variety_chart" class="chart-clickable"></div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div> 
 
+        <!-- [ User-based Graphs ] -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header"><h5>Your Weekly Submissions</h5></div>
+                    <div class="card-body">
+                        <div id="user_chart" class="chart-clickable"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header"><h5>Overall Weekly Trends</h5></div>
+                    <div class="card-body">
+                        <div id="weekly_chart" class="chart-clickable"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- [ Heatmap for Submission Activity ] -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header"><h5>Submission Activity Heatmap</h5></div>
+                    <div class="card-body">
+                        <div id="submission_activity" class="chart-clickable"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for Chart Details -->
+        <div id="chartModal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalTitle">Chart Details</h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="modalContent">More details about the selected chart will be displayed here.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
 {% endblock content %}
 
-
 {% block extra_js %}
-
 <script src="{% static 'assets/js/plugins/apexcharts.min.js' %}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var bayChart = new ApexCharts(document.querySelector("#bay_chart"), {
+            series: {{ bay_chart_data|safe }},
+            chart: { type: "bar", height: 350 },
+            xaxis: { categories: ["Bay"] },
+            title: { text: "Bay Distribution" }
+        });
+        bayChart.render();
 
+        var varietyChart = new ApexCharts(document.querySelector("#variety_chart"), {
+            series: {{ variety_chart_data|safe }},
+            chart: { type: "pie", height: 350 },
+            labels: ["Varieties"],
+            title: { text: "Variety Distribution" }
+        });
+        varietyChart.render();
+
+        var userChart = new ApexCharts(document.querySelector("#user_chart"), {
+            series: [{ name: "Your Submissions", data: {{ user_chart_data|safe }} }],
+            chart: { type: "line", height: 350 },
+            xaxis: { categories: ["Week"] },
+            title: { text: "Your Weekly Submissions" }
+        });
+        userChart.render();
+
+        var weeklyChart = new ApexCharts(document.querySelector("#weekly_chart"), {
+            series: [{ name: "Total Amounts", data: {{ weekly_chart_data|safe }} }],
+            chart: { type: "area", height: 350 },
+            xaxis: { categories: ["Week"] },
+            title: { text: "Overall Weekly Trends" }
+        });
+        weeklyChart.render();
+
+        var submissionActivity = new ApexCharts(document.querySelector("#submission_activity"), {
+            series: [{ name: "Submissions", data: {{ submission_activity_data|safe }} }],
+            chart: { type: "heatmap", height: 350 },
+            title: { text: "Submission Activity Heatmap" }
+        });
+        submissionActivity.render();
+
+        // Add event listeners for modal trigger
+        document.querySelectorAll(".chart-clickable").forEach(chart => {
+            chart.addEventListener("click", function () {
+                let chartTitle = this.closest(".card").querySelector("h5").innerText;
+                document.getElementById("modalTitle").innerText = chartTitle;
+                document.getElementById("modalContent").innerText = "Detailed data for " + chartTitle + " will be available here.";
+                $('#chartModal').modal('show');
+            });
+        });
+    });
+</script>
 {% endblock extra_js %}

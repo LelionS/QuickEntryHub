@@ -31,4 +31,9 @@ urlpatterns = [
     path("edit-entry/<int:entry_id>/", edit_entry, name="edit_entry"),
     path('get-entry-data/<int:entry_id>/', views.get_entry_data, name='get_entry_data'),
     path('edit-entry/<int:entry_id>/', views.edit_entry, name='edit_entry'),
+
+     path('get_bed_and_bay_for_variety/', views.get_bed_and_bay_for_variety, name='get_bed_and_bay_for_variety'),
+     path('get_variety_suggestions/', views.get_variety_suggestions, name='get_variety_suggestions'),
+
+      path("dynamic-dt/", views.dynamic_dt_view, name="dynamic_dt"),
 ]

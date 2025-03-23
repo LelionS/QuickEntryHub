@@ -240,3 +240,75 @@ def get_entry_data(request, entry_id):
     except WeekEntry.DoesNotExist:
         return JsonResponse({'error': 'Entry not found or not authorized to view this entry.'}, status=404)
 
+from django.http import JsonResponse
+from .models import Bay, Bed, Variety
+
+def get_bed_and_bay_for_variety(request):
+    variety_id = request.GET.get('variety_id')
+
+    # Fetch bed and bay info based on variety_id
+    if variety_id:
+        variety = Variety.objects.get(id=variety_id)
+        bed = variety.bed  # Assuming that a variety has a ForeignKey to Bed
+        bay = bed.bay  # Assuming that a bed has a ForeignKey to Bay
+        
+        return JsonResponse({
+            'bed_id': bed.id,
+            'bed_code': bed.code,
+            'bay_id': bay.id,
+            'bay_name': bay.name
+        })
+    return JsonResponse({'error': 'Invalid variety ID'}, status=400)
+
+from django.http import JsonResponse
+from .models import Variety
+
+def get_variety_suggestions(request):
+    term = request.GET.get('term', '')
+    varieties = Variety.objects.filter(name__icontains=term)  # Adjust field name if necessary
+
+    suggestions = [{'label': variety.name, 'value': variety.id} for variety in varieties]
+    return JsonResponse({'suggestions': suggestions})
+
+
+from django.shortcuts import render
+from django.db.models import Sum, Count
+from django.contrib.auth.decorators import login_required
+from .models import WeekEntry
+import json
+
+@login_required
+def dynamic_dt_view(request):
+    user = request.user  # Get current user
+
+    # Aggregate data
+    bay_data = WeekEntry.objects.values("bay__name").annotate(total_amounts=Sum("amounts"))
+    bed_data = WeekEntry.objects.values("bed__code").annotate(total_amounts=Sum("amounts"))
+    variety_data = WeekEntry.objects.values("variety__name").annotate(total_amounts=Sum("amounts"))
+
+    # User-specific data
+    user_data = WeekEntry.objects.filter(submitted_by=user).values("week").annotate(total_amounts=Sum("amounts"))
+
+    # Weekly Trend (All Users)
+    weekly_trend = WeekEntry.objects.values("week").annotate(total_amounts=Sum("amounts")).order_by("week")
+
+    # Submission Activity Heatmap (Counts per Week)
+    submission_activity = WeekEntry.objects.values("week").annotate(submissions=Count("id"))
+
+    # Convert QuerySet to JSON
+    bay_chart_data = [{"name": item["bay__name"], "data": [item["total_amounts"]]} for item in bay_data]
+    bed_chart_data = [{"name": item["bed__code"], "data": [item["total_amounts"]]} for item in bed_data]
+    variety_chart_data = [{"name": item["variety__name"], "data": [item["total_amounts"]]} for item in variety_data]
+    weekly_chart_data = [{"week": item["week"], "amounts": item["total_amounts"]} for item in weekly_trend]
+    submission_activity_data = [{"week": item["week"], "submissions": item["submissions"]} for item in submission_activity]
+    user_chart_data = [{"week": item["week"], "amounts": item["total_amounts"]} for item in user_data]
+
+    context = {
+        "bay_chart_data": json.dumps(bay_chart_data),
+        "bed_chart_data": json.dumps(bed_chart_data),
+        "variety_chart_data": json.dumps(variety_chart_data),
+        "weekly_chart_data": json.dumps(weekly_chart_data),
+        "submission_activity_data": json.dumps(submission_activity_data),
+        "user_chart_data": json.dumps(user_chart_data),
+    }
+    return render(request, "dyn_dt/index.html", context)

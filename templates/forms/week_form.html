@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,219 +7,160 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShowHouse Entry Form</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', Arial, sans-serif; }
-        body { background: #f4f4f4; padding: 15px; }
+        body { background: #f4f4f4; padding: 5px; }
+
+        .container { margin: auto; background: #fff; padding: 10px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
+        h2 { text-align: center; color: #333; margin-bottom: 15px; }
 
         form { display: flex; flex-direction: column; gap: 12px; }
         label { font-size: 14px; font-weight: 600; color: #555; }
-        select, input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; background: #f9f9f9; }
         select:focus, input:focus { border-color: #4CAF50; outline: none; }
         button { width: 100%; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s ease; }
         button:hover { background: #2E8B57; }
+
+        .user-info { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #333; margin-bottom: 10px; }
+        .user-info a { color: #4CAF50; text-decoration: none; font-weight: bold; }
 
         .modal {
             display: none;
             position: fixed;
             z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.6);
-            padding-top: 50px;
-            transition: opacity 0.3s ease-in-out;
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 15% auto;
-            padding: 25px;
-            border-radius: 10px;
-            width: 80%;
-            max-width: 400px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            animation: fadeIn 0.4s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .modal-header {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .modal-body {
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 20px;
-        }
-
-        .modal-footer {
-            text-align: right;
-        }
-
-        .modal-footer button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-            cursor: pointer;
-        }
-
-        .modal-footer button.cancel {
-            background-color: #e0e0e0;
-            color: #333;
-        }
-
-        .modal-footer button.cancel:hover {
-            background-color: #ccc;
-        }
-
-        .modal-footer button.confirm {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .modal-footer button.confirm:hover {
-            background-color: #388E3C;
-        }
-
-        .user-info {
             display: flex;
-            justify-content: space-between; 
-            align-items: center;
-            font-size: 14px;
-            color: #333;
-        }
-
-        .user-info span {
-            font-weight: bold; 
-        }
-
-        .logout-link {
-            font-size: 14px;
-            color: #333;
-            background-color: #f0f0f0;
-            text-decoration: none;
-            padding: 8px 14px;
-            border-radius: 5px;
-            display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: background-color 0.2s ease;
-            font-weight: normal;
-            border: 1px solid #ccc;
         }
-
-        .logout-link i {
-            margin-right: 5px;
-            font-size: 16px;
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 350px;
+            text-align: center;
         }
-
-        .logout-link:hover {
-            background-color: #e0e0e0;
-            border-color: #999;
-        }
-
     </style>
 </head>
 <body>
+    <div class="container">
+        <h2 style="color: #2E8B57; text-align: left;">Olij Propagation Kenya</h2>
+        <div class="user-info">
+            <span>Hi, {{ request.user.first_name }}</span>
+            <a href="{% url 'user_entries_list' %}"><i class="fas fa-list" style="margin-left: 140px;"></i> Entries</a>
+            <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
 
-    <h2>ShowHouse</h2>
-    <div class="user-info">
-        <span>Hi, {{ request.user.first_name }}</span>
-        <a href="{% url 'user_entries_list' %}" style="margin-left: 80%; text-decoration: none;">
-            <i class="fas fa-list" ></i> Entries
-        </a>
-        <a href="{% url 'logout' %}" style="text-decoration: none;">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </a>
+        <form id="weekEntryForm" method="post">
+            {% csrf_token %}
+            
+            <label for="Bay_no">Bed:</label>
+            <input type="text" id="bay" name="bay" list="bay-options" required>
+            <datalist id="bay-options">
+                <option value="">Select a Bay</option>
+                {% for bay in bays %}
+                    <option value="{{ bay.name }}">{{ bay.name }}</option>
+                {% endfor %}
+            </datalist>
+
+
+            <label for="bed_no">Bed:</label>
+            <input type="text" id="bed_no" name="bed_no" readonly>
+            <select id="bed_no" name="bed_no" required>
+                <option value="">Select a Bed</option>
+            </select>
+
+            <label for="variety">Variety (Autocomplete):</label>
+            <input type="text" id="variety" name="variety" placeholder="Start typing a variety..." required>
+
+            <label for="amounts">Amounts:</label>
+            <input type="number" id="amounts" name="amounts" required>
+            
+            <label for="date">Date (Week Number and Year):</label>
+            <input type="text" id="date" name="date" required readonly>
+            <input type="hidden" name="submitted_by" value="{{ request.user.id }}">
+
+            <button type="button" id="submitBtn">Submit</button>
+        </form>
     </div>
-    
-    
-    <form id="weekEntryForm" method="post">
-        {% csrf_token %}
-        
-        <label for="bay">Bay:</label>
-        <select id="bay" name="bay" required>
-            <option value="">Select a Bay</option>
-            {% for bay in bays %}
-                <option value="{{ bay.id }}">{{ bay.name }}</option>
-            {% endfor %}
-        </select>
-
-        <label for="bed_no">Bed:</label>
-        <select id="bed_no" name="bed_no" required>
-            <option value="">Select a Bed</option>
-        </select>
-
-        <label for="variety">Variety:</label>
-        <select id="variety" name="variety" required>
-            <option value="">Select a Variety</option>
-        </select>
-        
-        <label for="amounts">Amounts:</label>
-        <input type="number" id="amounts" name="amounts" required>
-        
-        <label for="date">Date (Week Number and Year):</label>
-        <input type="text" id="date" name="date" required readonly>
-
-        <input type="hidden" name="submitted_by" value="{{ request.user.id }}">
-
-        <button type="button" id="submitBtn">Submit</button>
-    </form>
 
     <script>
-    
-</script>
-    <script>
+        $(function() {
+    $("#variety").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "{% url 'get_variety_suggestions' %}",
+                data: { term: request.term },
+                success: function(data) {
+                    response(data.suggestions);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Autocomplete error: ", error);
+                }
+            });
+        },
+        minLength: 2,
+        select: function(event, ui) {
+            let variety_id = ui.item.value;
+            if (variety_id) {
+                $.ajax({
+                    url: "{% url 'get_bed_and_bay_for_variety' %}",
+                    data: { 'variety_id': variety_id },
+                    success: function(data) {
+                        if (data.bed_id) {
+                            $("#bed_no").val(data.bed_code); // Fill bed field
+                            populateBaySelect(data.bays); // Fill bay select
+                        } else {
+                            alert("No bed or bay information found for this variety.");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX error: ", error);
+                    }
+                });
+            }
+        }
+    });
+
+    function populateBaySelect(bays) {
+        // Clear any existing options
+        $("#bay").empty();
+
+        // Add a default "Select a Bay" option
+        $("#bay").append('<option value="">Select a Bay</option>');
+
+        // Populate the bay select with the available options
+        bays.forEach(function(bay) {
+            $("#bay").append('<option value="' + bay.id + '">' + bay.name + '</option>');
+        });
+    }
+});
+
+
+
         function getCurrentWeekAndYear() {
             const currentDate = new Date();
-
-
             const currentYear = currentDate.getFullYear();
-
             const startOfYear = new Date(currentYear, 0, 1);
-
             const dayOfWeek = startOfYear.getDay();
             const adjustDays = dayOfWeek <= 4 ? 1 - dayOfWeek : 8 - dayOfWeek;
             const firstThursday = new Date(currentYear, 0, 1 + adjustDays);
-
             const msDifference = currentDate - firstThursday;
-
             const weekNumber = Math.ceil(msDifference / (7 * 24 * 60 * 60 * 1000));
             const weekYear = weekNumber > 0 ? currentYear : currentYear - 1;
-
             return `Week ${weekNumber}, ${weekYear}`;
         }
         document.getElementById('date').value = getCurrentWeekAndYear();
-
-        document.getElementById("submitBtn").addEventListener("click", function() {
-            var formData = new FormData(document.getElementById("weekEntryForm"));
-
-            fetch("{% url 'submit_week_entry' %}", {
-                method: "POST",
-                body: formData,
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    alert(data.message);
-                    window.location.href = "{% url 'week_form' %}"; // Redirect to table view
-                } else {
-                    alert("Error: " + data.error);
-                }
-            })
-            .catch(error => console.error("Error:", error));
-        });
 
         $("#bay").change(function () {
             let bay_id = $(this).val();
@@ -238,36 +180,91 @@
             }
         });
 
-        $("#bed_no").change(function () {
-            let bed_id = $(this).val();
-            if (bed_id) {
-                $.ajax({
-                    url: "{% url 'get_varieties' %}",
-                    data: { 'bed_id': bed_id },
-                    success: function (data) {
-                        $("#variety").html('<option value="">Select a Variety</option>');
-                        $.each(data.varieties, function (key, value) {
-                            $("#variety").append('<option value="' + value.id + '">' + value.name + '</option>');
-                        });
-                    }
-                });
-            } else {
-                $("#variety").html('<option value="">Select a Variety</option>');
-            }
-        });
+        
 
-        $("#submitBtn").click(function () {
-            $("#confirmationModal").fadeIn();
-        });
-
-        $(".cancel").click(function () {
-            $("#confirmationModal").fadeOut();
-        });
-
-        $("#confirmSubmit").click(function () {
-            $("#weekEntryForm").submit();
+        document.getElementById("submitBtn").addEventListener("click", function() {
+            var formData = new FormData(document.getElementById("weekEntryForm"));
+            fetch("{% url 'submit_week_entry' %}", {
+                method: "POST",
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);
+                    window.location.href = "{% url 'week_form' %}"; 
+                } else {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(error => console.error("Error:", error));
         });
     </script>
 
+
+    <div class="form-container">
+        <h2>Variety Form</h2>
+        <form method="POST" action="{% url 'week_form' %}">
+            {% csrf_token %}
+            
+            <!-- Variety Input with Autocomplete -->
+            <label for="variety">Select Variety</label>
+            <input type="text" id="variety" name="variety" placeholder="Start typing a variety...">
+
+            <!-- Bed Input (autofilled) -->
+            <label for="bed_no">Bed Number</label>
+            <input type="text" id="bed_no" name="bed_no" readonly>
+
+            <!-- Bay Input (autofilled) -->
+            <label for="bay">Bay</label>
+            <input type="text" id="bay" name="bay" readonly>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        $(function() {
+            // Autocomplete functionality for the variety field
+            $("#variety").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "{% url 'get_variety_suggestions' %}",
+                        data: { term: request.term },  // Send typed term for suggestions
+                        success: function(data) {
+                            response(data.suggestions);  // Pass suggestions to autocomplete
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Autocomplete error: ", error);  // Log any errors
+                        }
+                    });
+                },
+                minLength: 2  // Minimum characters to start showing suggestions
+            });
+
+            // Handle variety selection to autofill bed and bay fields
+            $("#variety").on("autocompleteselect", function(event, ui) {
+                let variety_id = ui.item.value;  // The ID of the selected variety
+                if (variety_id) {
+                    $.ajax({
+                        url: "{% url 'get_bed_and_bay_for_variety' %}",  // Ensure this URL matches your URL pattern
+                        data: { 'variety_id': variety_id },
+                        success: function(data) {
+                            if (data.bed_id) {
+                                $("#bed_no").val(data.bed_code);  // Autofill bed number
+                                $("#bay").val(data.bay_name);     // Autofill bay
+                            } else {
+                                alert("No bed or bay information found for this variety.");
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("AJAX error: ", error);  // Log any errors
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    
 </body>
 </html>
