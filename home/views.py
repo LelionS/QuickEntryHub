@@ -312,3 +312,5 @@ def dynamic_dt_view(request):
         "user_chart_data": json.dumps(user_chart_data),
     }
     return render(request, "dyn_dt/index.html", context)
+
+

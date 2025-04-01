@@ -76,10 +76,6 @@
 
             <label for="bed_no">Bed:</label>
             <input type="text" id="bed_no" name="bed_no" readonly>
-            <select id="bed_no" name="bed_no" required>
-                <option value="">Select a Bed</option>
-            </select>
-
             <label for="variety">Variety (Autocomplete):</label>
             <input type="text" id="variety" name="variety" placeholder="Start typing a variety..." required>
 
@@ -200,29 +196,6 @@
             .catch(error => console.error("Error:", error));
         });
     </script>
-
-
-    <div class="form-container">
-        <h2>Variety Form</h2>
-        <form method="POST" action="{% url 'week_form' %}">
-            {% csrf_token %}
-            
-            <!-- Variety Input with Autocomplete -->
-            <label for="variety">Select Variety</label>
-            <input type="text" id="variety" name="variety" placeholder="Start typing a variety...">
-
-            <!-- Bed Input (autofilled) -->
-            <label for="bed_no">Bed Number</label>
-            <input type="text" id="bed_no" name="bed_no" readonly>
-
-            <!-- Bay Input (autofilled) -->
-            <label for="bay">Bay</label>
-            <input type="text" id="bay" name="bay" readonly>
-
-            <button type="submit">Submit</button>
-        </form>
-    </div>
-
     <script>
         $(function() {
             // Autocomplete functionality for the variety field

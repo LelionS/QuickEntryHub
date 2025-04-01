@@ -54,7 +54,7 @@
           <label>Pages</label>
         </li>
         <li class="pc-item">
-          <a href="{% url "index" %}" class="pc-link">
+          <a href="{% url "dynamic_dt" %}" class="pc-link">
             <span class="pc-micon">
               <i data-feather="home"></i>
             </span>
@@ -77,17 +77,18 @@
           <ul class="pc-submenu">
               {% if user.is_staff %}
               <li class="pc-item">
-                  <a href="http://127.0.0.1:8000/admin/home/bay/" class="pc-link">Bay</a>
-              </li>
-              <li class="pc-item">
-                  <a href=" http://127.0.0.1:8000/admin/home/bed/" class="pc-link">Bed</a>
-              </li>
-              <li class="pc-item">
-                <a href="http://127.0.0.1:8000/admin/home/variety/" class="pc-link">Variety</a>
-               </li>
-              <li class="pc-item">
-                <a href="http://127.0.0.1:8000/admin/home/weekentry/" class="pc-link">Edit Week Entries</a>
-              </li>
+                <a href="{% url 'admin:home_bay_changelist' %}" class="pc-link">Bay</a>
+            </li>
+            <li class="pc-item">
+                <a href="{% url 'admin:home_bed_changelist' %}" class="pc-link">Bed</a>
+            </li>
+            <li class="pc-item">
+                <a href="{% url 'admin:home_variety_changelist' %}" class="pc-link">Variety</a>
+            </li>
+            <li class="pc-item">
+                <a href="{% url 'admin:home_weekentry_changelist' %}" class="pc-link">Week Entries</a>
+            </li>
+            
       
               {% endif %}
           </ul>

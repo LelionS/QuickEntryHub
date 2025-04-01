@@ -1,6 +1,7 @@
 from django.db import models
 
 class Bay(models.Model):
+    id = models.CharField(max_length=10, primary_key=True) 
     name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
